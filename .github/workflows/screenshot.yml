@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   screenshot:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,10 +24,10 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Take screenshot with headed browser
-        run: xvfb-run --auto-servernum node screenshot.js
+        run: node screenshot.js
 
       - name: Commit and push screenshot
         run: |

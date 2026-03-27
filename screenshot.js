@@ -61,7 +61,7 @@ const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) 
 
   const page = await context.newPage();
 
-  await page.goto('https://example.com', {
+  await page.goto('https://chat.qwen.ai', {
     waitUntil: 'domcontentloaded',
     timeout: 30000,
   });

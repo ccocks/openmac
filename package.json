@@ -1,0 +1,13 @@
+{
+  "name": "playwright-screenshot-action",
+  "version": "1.0.0",
+  "description": "GitHub Action that takes screenshots with Playwright headed browser",
+  "scripts": {
+    "screenshot": "node screenshot.js"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

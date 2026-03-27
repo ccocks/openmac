@@ -1,5 +1,6 @@
 const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const { spawn } = require('child_process');
 const path = require('path');
 
 chromium.use(StealthPlugin());
@@ -7,7 +8,39 @@ chromium.use(StealthPlugin());
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+function startRecording(outputPath, durationSec) {
+  const ffmpeg = spawn('ffmpeg', [
+    '-y',
+    '-f', 'avfoundation',
+    '-capture_cursor', '1',
+    '-capture_mouse_clicks', '1',
+    '-i', '1:',
+    '-t', String(durationSec),
+    '-r', '24',
+    '-vf', 'scale=1280:-2',
+    '-c:v', 'libx264',
+    '-preset', 'ultrafast',
+    '-crf', '28',
+    '-pix_fmt', 'yuv420p',
+    outputPath,
+  ], { stdio: ['pipe', 'pipe', 'pipe'] });
+
+  ffmpeg.stderr.on('data', (d) => {
+    const msg = d.toString();
+    if (msg.includes('error') || msg.includes('Error')) process.stderr.write(msg);
+  });
+
+  return ffmpeg;
+}
+
 (async () => {
+  const RECORD_SECONDS = 10;
+  const outDir = __dirname;
+
+  console.log(`Starting ${RECORD_SECONDS}s screen recording...`);
+  const ffmpeg = startRecording(path.join(outDir, 'recording.mp4'), RECORD_SECONDS);
+  await sleep(1000);
+
   const browser = await chromium.launch({
     headless: false,
     args: [
@@ -66,22 +99,28 @@ const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) 
     timeout: 30000,
   });
 
-  await sleep(randomBetween(1000, 3000));
-
-  await page.mouse.move(randomBetween(100, 500), randomBetween(100, 400));
-  await sleep(randomBetween(200, 600));
-  await page.mouse.move(randomBetween(300, 700), randomBetween(200, 500));
-  await sleep(randomBetween(300, 800));
-
-  await page.evaluate(() => window.scrollTo(0, Math.floor(Math.random() * 150) + 50));
+  await sleep(randomBetween(1500, 2500));
+  await page.mouse.move(randomBetween(200, 600), randomBetween(150, 450));
+  await sleep(randomBetween(300, 700));
+  await page.mouse.move(randomBetween(400, 800), randomBetween(250, 550));
   await sleep(randomBetween(500, 1000));
+  await page.evaluate(() => window.scrollTo(0, Math.floor(Math.random() * 150) + 50));
+  await sleep(randomBetween(500, 800));
+  await page.mouse.move(randomBetween(100, 900), randomBetween(300, 600));
+  await sleep(randomBetween(1000, 2000));
 
   await page.screenshot({
-    path: path.join(__dirname, 'screenshot.png'),
+    path: path.join(outDir, 'screenshot.png'),
     fullPage: false,
   });
-
   console.log('Screenshot saved to screenshot.png');
 
   await browser.close();
+
+  await new Promise((resolve) => {
+    ffmpeg.on('close', resolve);
+    if (ffmpeg.exitCode !== null) resolve();
+  });
+
+  console.log('Recording saved to recording.mp4');
 })();

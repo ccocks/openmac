@@ -14,7 +14,7 @@ function startRecording(outputPath, durationSec) {
     '-f', 'avfoundation',
     '-capture_cursor', '1',
     '-capture_mouse_clicks', '1',
-    '-i', '1:',
+    '-i', '0:',
     '-t', String(durationSec),
     '-r', '24',
     '-vf', 'scale=1280:-2',
@@ -26,8 +26,11 @@ function startRecording(outputPath, durationSec) {
   ], { stdio: ['pipe', 'pipe', 'pipe'] });
 
   ffmpeg.stderr.on('data', (d) => {
-    const msg = d.toString();
-    if (msg.includes('error') || msg.includes('Error')) process.stderr.write(msg);
+    process.stderr.write(d.toString());
+  });
+
+  ffmpeg.on('error', (err) => {
+    console.error('ffmpeg error:', err.message);
   });
 
   return ffmpeg;

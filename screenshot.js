@@ -117,7 +117,8 @@ function startRecording(outputPath, durationSec) {
     fullPage: false,
   });
   console.log('Screenshot saved to screenshot.png');
-  await page.keyboard.press_sequentially('Copilot????', { delay: 100 });   
+  await page.locator("textarea").press_sequentially('Copilot????', { delay: 100 });   
+  await page.getByRole('button', { name: 'Submit message' }).click();   
   await sleep(100000)
   await browser.close();
 

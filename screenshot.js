@@ -37,7 +37,7 @@ function startRecording(outputPath, durationSec) {
 }
 
 (async () => {
-  const RECORD_SECONDS = 10;
+  const RECORD_SECONDS = 30;
   const outDir = __dirname;
 
   console.log(`Starting ${RECORD_SECONDS}s screen recording...`);

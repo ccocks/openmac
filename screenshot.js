@@ -117,7 +117,7 @@ function startRecording(outputPath, durationSec) {
     fullPage: false,
   });
   console.log('Screenshot saved to screenshot.png');
-
+  await sleep(30000)
   await browser.close();
 
   await new Promise((resolve) => {

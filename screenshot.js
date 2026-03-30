@@ -37,7 +37,7 @@ function startRecording(outputPath, durationSec) {
 }
 
 (async () => {
-  const RECORD_SECONDS = 200;
+  const RECORD_SECONDS = 100;
   const outDir = __dirname;
 
   console.log(`Starting ${RECORD_SECONDS}s screen recording...`);
@@ -117,7 +117,8 @@ function startRecording(outputPath, durationSec) {
     fullPage: false,
   });
   console.log('Screenshot saved to screenshot.png');
-  await sleep(200000)
+  await page.keyboard.press_sequentially('Copilot????', { delay: 100 });   
+  await sleep(100000)
   await browser.close();
 
   await new Promise((resolve) => {

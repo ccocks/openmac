@@ -2,12 +2,38 @@ const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const { spawn } = require('child_process');
 const path = require('path');
+const { mouse, screen, straightTo, Button } = require("@nut-tree/nut-js");
+const { OpenCVProvider } = require("@nut-tree/opencv");
+
+screen.config.resourceDirectory = path.join(__dirname, "images"); // where your sample images live
+screen.config.confidence = 0.8; // tolerance (0.7–0.85 is sane)
+screen.config.provider = new OpenCVProvider();
+screen.config.autoHighlight = true;
 
 chromium.use(StealthPlugin());
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+async function clickByImage(imageName) {
+  try {
+    const region = await screen.find(imageName);
 
+    // move with some variation
+    await mouse.move(
+      straightTo(region.center(), {
+        speed: randomBetween(600, 1200),
+      })
+    );
+
+    await sleep(randomBetween(100, 300));
+
+    await mouse.click(Button.LEFT);
+
+    console.log(`Clicked image: ${imageName}`);
+  } catch (err) {
+    console.error(`Image not found: ${imageName}`);
+  }
+}
 function startRecording(outputPath, durationSec) {
   const ffmpeg = spawn('ffmpeg', [
     '-y',
@@ -102,16 +128,7 @@ function startRecording(outputPath, durationSec) {
     timeout: 30000,
   });
 
-  await sleep(randomBetween(1500, 2500));
-  await page.mouse.move(randomBetween(200, 600), randomBetween(150, 450));
-  await sleep(randomBetween(300, 700));
-  await page.mouse.move(randomBetween(400, 800), randomBetween(250, 550));
-  await sleep(randomBetween(500, 1000));
-  await page.evaluate(() => window.scrollTo(0, Math.floor(Math.random() * 150) + 50));
-  await sleep(randomBetween(500, 800));
-  await page.mouse.move(randomBetween(100, 900), randomBetween(300, 600));
-  await sleep(randomBetween(1000, 2000));
-
+  
   await page.screenshot({
     path: path.join(outDir, 'screenshot.png'),
     fullPage: false,
@@ -120,7 +137,11 @@ function startRecording(outputPath, durationSec) {
   const textarea = page.locator("textarea#userInput")
   await textarea.pressSequentially('Copilot????');   
   await page.getByRole('button', { name: 'Submit message' }).click();   
-  await sleep(100000)
+  await sleep(10000)
+
+  await clickByImage("captcha.png"); // your sample image
+  await sleep(90000)
+
   await browser.close();
 
   await new Promise((resolve) => {

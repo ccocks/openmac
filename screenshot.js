@@ -97,7 +97,7 @@ function startRecording(outputPath, durationSec) {
 
   const page = await context.newPage();
 
-  await page.goto('https://chat.qwen.ai', {
+  await page.goto('https://copilot.com', {
     waitUntil: 'domcontentloaded',
     timeout: 30000,
   });

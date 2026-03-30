@@ -2,12 +2,10 @@ const { chromium } = require('playwright-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const { spawn } = require('child_process');
 const path = require('path');
-const { mouse, screen, straightTo, Button } = require("@nut-tree/nut-js");
-const { OpenCVProvider } = require("@nut-tree/opencv");
+const { mouse, screen, straightTo, Button } = require("@nut-tree-fork/nut-js");
 
 screen.config.resourceDirectory = path.join(__dirname, "images"); // where your sample images live
 screen.config.confidence = 0.8; // tolerance (0.7–0.85 is sane)
-screen.config.provider = new OpenCVProvider();
 screen.config.autoHighlight = true;
 
 chromium.use(StealthPlugin());

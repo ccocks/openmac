@@ -6,6 +6,7 @@
     "screenshot": "node screenshot.js"
   },
   "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
     "playwright": "^1.48.0",
     "playwright-extra": "^4.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"
